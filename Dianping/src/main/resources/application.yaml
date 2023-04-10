@@ -11,7 +11,6 @@ spring:
   redis:
     host: 192.168.18.130
     port: 6379
-    password: 123321
     lettuce:
       pool:
         max-active: 10
@@ -25,3 +24,10 @@ mybatis-plus:
 logging:
   level:
     com.hmdp: debug
+jwt:
+  secret: D4AS56DSA46D1SA5DAS132W1Q32E
+  prefix: Auth
+  tokenHeader: authorization
+  subject: Yetong
+  issUser: Yetong
+  expireTime: 3600
