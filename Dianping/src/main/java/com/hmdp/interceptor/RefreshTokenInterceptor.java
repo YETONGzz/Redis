@@ -20,14 +20,23 @@ import static com.hmdp.commond.Constants.TOKEN_TIMEOUT;
 /**
  * token续签拦截器
  */
-public class RefreshToken implements HandlerInterceptor {
+public class RefreshTokenInterceptor implements HandlerInterceptor {
 
     private final StringRedisTemplate redisTemplate;
 
-    public RefreshToken(StringRedisTemplate redisTemplate) {
+    public RefreshTokenInterceptor(StringRedisTemplate redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
 
+    /**
+     * token刷新 向ThreadLocal中射入用户
+     *
+     * @param request
+     * @param response
+     * @param handler
+     * @return
+     * @throws Exception
+     */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String token = request.getHeader(JWTConfig.tokenHeader);
@@ -40,7 +49,7 @@ public class RefreshToken implements HandlerInterceptor {
             return true;
         }
         UserDTO userDTO = BeanUtil.fillBeanWithMap(map, new UserDTO(), false);
-        redisTemplate.expire(key,TOKEN_TIMEOUT, TimeUnit.MINUTES);
+        redisTemplate.expire(key, TOKEN_TIMEOUT, TimeUnit.MINUTES);
         UserHolder.saveUser(userDTO);
         return true;
     }
