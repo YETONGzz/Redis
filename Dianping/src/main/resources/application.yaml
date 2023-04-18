@@ -2,7 +2,7 @@ server:
   port: 8081
 spring:
   application:
-    name: hmdp
+    name: redis
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/redis-smslogin?useSSL=false&serverTimezone=UTC
@@ -23,7 +23,7 @@ mybatis-plus:
   type-aliases-package: com.hmdp.entity # 别名扫描包
 logging:
   level:
-    com.hmdp: debug
+    com.yetong: debug
 jwt:
   secret: D4AS56DSA46D1SA5DAS132W1Q32E
   prefix: Auth
