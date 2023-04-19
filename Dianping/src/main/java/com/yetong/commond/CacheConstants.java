@@ -17,4 +17,5 @@ public class CacheConstants {
     public static final Long LOGIC_TIMEOUT = 30L;
     public static final TimeUnit PENETRATE_TIMEUNIT = TimeUnit.MINUTES;
     public static final Long LOCK_TIMEOUT = 10L;
+    public static final String ID_PREFIX = "id:";
 }

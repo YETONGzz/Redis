@@ -92,8 +92,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         String accessToken = jwtUtil.createAccessToken(user);
         String key = CODE_CACHE_PREFIX + accessToken;
         Map map = BeanUtil.beanToMap(user, new HashMap(), CopyOptions.create()
-                .setIgnoreNullValue(true)
-                .setFieldValueEditor((name, value) -> value.toString()));
+                .setFieldValueEditor((name, value) -> {
+                    if (value != null) {
+                        return value.toString();
+                    }
+                    return null;
+                }));
         redisTemplate.opsForHash().putAll(key, map);
         redisTemplate.expire(key, TOKEN_TIMEOUT, TimeUnit.MINUTES);
         return Result.ok(accessToken);
