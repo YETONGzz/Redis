@@ -18,4 +18,6 @@ public class CacheConstants {
     public static final TimeUnit PENETRATE_TIMEUNIT = TimeUnit.MINUTES;
     public static final Long LOCK_TIMEOUT = 10L;
     public static final String ID_PREFIX = "id:";
+    public static final String VOUCHER_LOCK = "voucher:lock:";
+    public static final Long VOUCHER_LOCK_TIMEOUT = 10L;
 }
