@@ -7,10 +7,9 @@ import java.util.concurrent.TimeUnit;
 
 public class SimpleRedisLock {
 
-    private static final String RESOURCE = "1";
     private final StringRedisTemplate redisTemplate;
     private String key;
-    private static final
+    private static Long threadId = Thread.currentThread().getId();
 
     private SimpleRedisLock(String key, StringRedisTemplate redisTemplate) {
         this.redisTemplate = redisTemplate;
@@ -28,12 +27,15 @@ public class SimpleRedisLock {
      * @return
      */
     public boolean tryLock(long timeout) {
-        Boolean flag = redisTemplate.opsForValue().setIfAbsent(key, RESOURCE, timeout, TimeUnit.SECONDS);
+        //通过线程id实现可重入锁
+        String threadFlag = threadId + key;
+        Boolean flag = redisTemplate.opsForValue().setIfAbsent(key, threadFlag, timeout, TimeUnit.SECONDS);
         return BooleanUtil.isTrue(flag);
     }
 
     public boolean tryLock(String key, Long timeout, TimeUnit unit) {
-        Boolean flag = redisTemplate.opsForValue().setIfAbsent(key, RESOURCE, timeout, unit);
+        String threadFlag = threadId + key;
+        Boolean flag = redisTemplate.opsForValue().setIfAbsent(key, threadFlag, timeout, unit);
         return BooleanUtil.isTrue(flag);
     }
 
