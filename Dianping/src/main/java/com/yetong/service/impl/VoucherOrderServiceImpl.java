@@ -38,7 +38,6 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
     RedisIdWorker idWorker;
     @Autowired
     IVoucherOrderService voucherOrderService;
-
     @Autowired
     StringRedisTemplate redisTemplate;
 
@@ -107,7 +106,7 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
 //        }
         SimpleRedisLock redisLock = SimpleRedisLock.getRedisLock(CacheConstants.VOUCHER_LOCK + userId, redisTemplate);
 
-        if (!redisLock.tryLock(CacheConstants.VOUCHER_LOCK_TIMEOUT)) {
+        if (!redisLock.tryReentrantLock(CacheConstants.VOUCHER_LOCK_TIMEOUT)) {
             return Result.fail("不允许重复下单");
         }
         try {
@@ -115,7 +114,7 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
         } catch (Exception e) {
             return Result.fail("创建订单失败");
         } finally {
-            redisLock.unLock();
+            redisLock.unReentrantLock();
         }
     }
 

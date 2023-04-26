@@ -47,15 +47,28 @@ public class RedisService {
         return redisTemplate.opsForValue().get(key);
     }
 
-    public void put(String key, Object obj) {
+    public void putAll(String key, Object obj) {
         Map map = ParamUtil.beanToMap(obj);
         redisTemplate.opsForHash().putAll(key, map);
     }
 
-    public void put(String key, Object obj, Long expire, TimeUnit unit) {
+    public void putAll(String key, Object obj, Long expire, TimeUnit unit) {
         Map map = ParamUtil.beanToMap(obj);
         redisTemplate.opsForHash().putAll(key, map);
         redisTemplate.expire(key, expire, unit);
+    }
+
+    public void put(String key, String hashKey, Object obj, Long expire, TimeUnit unit) {
+        redisTemplate.opsForHash().put(key, hashKey, obj);
+        redisTemplate.expire(key, expire, unit);
+    }
+
+    public void put(String key, String hashKey, Object obj) {
+        redisTemplate.opsForHash().put(key, hashKey, obj);
+    }
+
+    public Object getHashValue(String key, String hashKey) {
+        return redisTemplate.opsForHash().get(key, hashKey);
     }
 
     public Map getHash(String key) {
@@ -130,7 +143,7 @@ public class RedisService {
     /**
      * 逻辑过期解决缓存击穿
      */
-    public <T> T cacheBreakByLogicExpire(String key, Class<T> tClass, Supplier<T> supplier,Long timeout,TimeUnit timeUnit) {
+    public <T> T cacheBreakByLogicExpire(String key, Class<T> tClass, Supplier<T> supplier, Long timeout, TimeUnit timeUnit) {
         String json = get(key);
         T t = null;
         //判断是否是不存在的数据或者空数据
@@ -145,7 +158,7 @@ public class RedisService {
         }
 
         //获取到锁异步进行缓存重建
-        if (cacheService.tryLock(key,timeout,timeUnit)) {
+        if (cacheService.tryLock(key, timeout, timeUnit)) {
             CACHE_EXECUTOR.submit(() -> {
                 try {
                     T r = supplier.get();
