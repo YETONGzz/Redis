@@ -64,12 +64,12 @@ public class SimpleRedisLock {
      * @param timeout
      * @return
      */
-    public boolean tryReentrantLock(long timeout) {
+    public boolean tryReentrantLock(Long timeout) {
         String threadFlag = lockFlagPrefix + Thread.currentThread().getId();
         Long execute = redisTemplate.execute(
                 LOCK_SCRIPT,
                 Collections.singletonList(key),
-                threadFlag, timeout);
+                threadFlag, Long.valueOf(TimeUnit.SECONDS.toMillis(timeout)).toString());
         return execute == ACQUIRE_LOCK;
     }
 
@@ -100,5 +100,6 @@ public class SimpleRedisLock {
                 Collections.singletonList(key),
                 lockFlagPrefix + Thread.currentThread().getId());
     }
+
 
 }

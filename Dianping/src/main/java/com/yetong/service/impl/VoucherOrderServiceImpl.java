@@ -109,6 +109,7 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
         if (!redisLock.tryReentrantLock(CacheConstants.VOUCHER_LOCK_TIMEOUT)) {
             return Result.fail("不允许重复下单");
         }
+        test(redisLock);
         try {
             return voucherOrderService.createOrder(voucherId);
         } catch (Exception e) {
@@ -148,5 +149,17 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
         voucherOrder.setVoucherId(voucherId);
         save(voucherOrder);
         return Result.ok(orderId);
+    }
+
+    public void test(SimpleRedisLock redisLock) {
+        try {
+            boolean b = redisLock.tryReentrantLock(CacheConstants.VOUCHER_LOCK_TIMEOUT);
+            System.out.println(b);
+        }catch (Exception e){
+
+        }finally {
+            redisLock.unReentrantLock();
+        }
+
     }
 }
